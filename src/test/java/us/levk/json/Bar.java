@@ -28,6 +28,7 @@ package us.levk.json;
 import static us.levk.json.Foo.f;
 
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 
 @Path ("/bar")
@@ -37,5 +38,10 @@ public class Bar {
   public Foo w () {
     return f ("r", f ("c1", f ("c1c1"), f ("c1c2"), f ("c1c3", f ("c1c3c1"))), f ("c2"),
               f ("c3", f ("c3c1", f ("c3c1c1"))));
+  }
+
+  @POST
+  public Baz q () {
+    return new Baz ();
   }
 }

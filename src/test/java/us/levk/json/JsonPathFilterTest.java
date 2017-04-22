@@ -30,6 +30,7 @@ import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static org.hamcrest.CoreMatchers.is;
 import static org.jboss.resteasy.mock.MockDispatcherFactory.createDispatcher;
 import static org.jboss.resteasy.mock.MockHttpRequest.get;
+import static org.jboss.resteasy.mock.MockHttpRequest.post;
 import static org.junit.Assert.assertThat;
 
 import java.io.IOException;
@@ -59,15 +60,22 @@ public class JsonPathFilterTest {
     m = new ObjectMapper ();
   }
 
-  <T> T invoke (Class <T> c, MockHttpRequest q) throws IOException {
+  MockHttpResponse invoke (MockHttpRequest q) throws IOException {
     MockHttpResponse r = new MockHttpResponse ();
     d.invoke (q, r);
-    return m.readerFor (c).readValue (r.getOutput ());
+    return r;
   }
 
   @Test
-  public void filter () throws Exception {
-    assertThat (invoke (Set.class, get ("/bar").accept (APPLICATION_JSON).header ("JSONPath", "$.c[*].c[*].v")),
+  public void filterBean () throws Exception {
+    assertThat (m.readerFor (Set.class).readValue (invoke (get ("/bar").accept (APPLICATION_JSON).header ("JSONPath",
+                                                                                                          "$.c[*].c[*].v")).getOutput ()),
                 is (new HashSet <> (asList ("c1c1", "c1c2", "c1c3", "c3c1"))));
+  }
+
+  @Test
+  public void filterCustom () throws Exception {
+    assertThat (invoke (post ("/bar").accept (APPLICATION_JSON).header ("JSONPath", "$.foo")).getContentAsString (),
+                is ("foo"));
   }
 }
