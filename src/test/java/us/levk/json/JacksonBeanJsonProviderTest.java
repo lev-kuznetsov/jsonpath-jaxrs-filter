@@ -40,7 +40,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class JacksonBeanJsonProviderTest {
 
-  JacksonBeanJsonProvider p = new JacksonBeanJsonProvider (new ObjectMapper ());
+  JacksonBeanJsonProvider2 p = new JacksonBeanJsonProvider2 (new ObjectMapper ());
 
   @Test
   public void getArrayIndex () {

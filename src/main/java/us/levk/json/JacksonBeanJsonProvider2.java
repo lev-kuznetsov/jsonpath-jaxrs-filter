@@ -53,6 +53,9 @@ import com.jayway.jsonpath.JsonPathException;
 import com.jayway.jsonpath.spi.json.JacksonJsonProvider;
 
 /**
+ * Jackson based JSON provider for jayway JSONPath implementation, this provider
+ * will lazily fetch properties from a bean object
+ * 
  * @author levk
  */
 public class JacksonBeanJsonProvider2 extends JacksonJsonProvider {
