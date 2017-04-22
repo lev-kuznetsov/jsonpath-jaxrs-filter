@@ -30,6 +30,8 @@ import static com.jayway.jsonpath.JsonPath.parse;
 import static java.util.Optional.ofNullable;
 import static java.util.stream.Stream.of;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
+import static javax.ws.rs.core.MediaType.APPLICATION_XML;
+import static javax.ws.rs.core.MediaType.TEXT_XML;
 
 import java.io.IOException;
 import java.util.Optional;
@@ -51,7 +53,7 @@ import com.jayway.jsonpath.spi.json.JsonProvider;
  * @author levk
  */
 @Provider
-@Produces ({ APPLICATION_JSON, "application/yaml", "text/yaml" })
+@Produces ({ APPLICATION_JSON, "application/yaml", "text/yaml", APPLICATION_XML, TEXT_XML })
 public class JsonPathFilter implements ContainerResponseFilter {
 
   /**
