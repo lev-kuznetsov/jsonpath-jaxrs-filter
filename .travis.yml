@@ -3,6 +3,9 @@ language: java
 jdk:
 - oraclejdk8
 
+install:
+- mvn package
+
 script:
 - mvn test
 
