@@ -33,6 +33,9 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.junit.Test;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -40,7 +43,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class JacksonBeanJsonProviderTest {
 
-  JacksonBeanJsonProvider2 p = new JacksonBeanJsonProvider2 (new ObjectMapper ());
+  JacksonBeanJsonProvider p = new JacksonBeanJsonProvider (new ObjectMapper ());
 
   @Test
   public void getArrayIndex () {
@@ -101,6 +104,21 @@ public class JacksonBeanJsonProviderTest {
     assertThat ((Iterable <Integer>) p.toIterable (new int[] { 1, 2, 3 }),
                 allOf (hasItem (1), hasItem (2), hasItem (3)));
     assertThat ((Iterable <Integer>) p.toIterable (asList (1, 2, 3)), allOf (hasItem (1), hasItem (2), hasItem (3)));
+  }
 
+  @Test
+  public void setProperty () {
+    Map <String, String> m = new HashMap <> ();
+    m.put ("foo", "bar");
+    p.setProperty (m, "foo", "baz");
+    assertThat (m.get ("foo"), is ("baz"));
+  }
+
+  @Test
+  public void removeProperty () {
+    Map <String, String> m = new HashMap <> ();
+    m.put ("foo", "bar");
+    p.removeProperty (m, "foo");
+    assertFalse (m.containsKey ("foo"));
   }
 }
