@@ -81,9 +81,9 @@ public class JsonPathFilter implements ContainerResponseFilter {
    */
   @Override
   public void filter (ContainerRequestContext q, ContainerResponseContext r) throws IOException {
-    ofNullable (q.getHeaders ().getFirst ("JSONPath")).filter (j -> "$..*".equals (j)).ifPresent (j -> {
+    ofNullable (q.getHeaders ().getFirst ("JSONPath")).filter (j -> !"$..*".equals (j)).ifPresent (j -> {
       r.setEntity (parse (r.getEntity (), builder ().jsonProvider (resolve (r, JsonProvider.class).orElseGet ( () -> {
-        return new JacksonBeanJsonProvider (resolve (r, ObjectMapper.class).orElseGet (ObjectMapper::new));
+        return new JacksonBeanJsonProvider2 (resolve (r, ObjectMapper.class).orElseGet (ObjectMapper::new));
       })).build ()).read (j));
     });
   }

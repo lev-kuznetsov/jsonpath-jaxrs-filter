@@ -30,6 +30,7 @@ import static java.util.Optional.of;
 import static java.util.Spliterator.IMMUTABLE;
 import static java.util.Spliterators.spliteratorUnknownSize;
 import static java.util.stream.Collectors.toList;
+import static java.util.stream.IntStream.range;
 import static java.util.stream.StreamSupport.stream;
 
 import java.lang.reflect.Array;
@@ -176,5 +177,18 @@ public class JacksonBeanJsonProvider extends JacksonJsonProvider {
   public void setArrayIndex (Object o, int i, Object v) {
     if (o instanceof List) ((List <Object>) o).set (i, v);
     else Array.set (o, i, v);
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * com.jayway.jsonpath.spi.json.AbstractJsonProvider#toIterable(java.lang.
+   * Object)
+   */
+  @Override
+  public Iterable <? extends Object> toIterable (Object o) {
+    return o instanceof Iterable ? (Iterable <?>) o
+                                 : range (0, length (o)).mapToObj (i -> getArrayIndex (o, i)).collect (toList ());
   }
 }

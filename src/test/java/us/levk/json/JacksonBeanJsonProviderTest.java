@@ -94,4 +94,13 @@ public class JacksonBeanJsonProviderTest {
     p.setArrayIndex (i, 1, 4);
     assertThat (i[1], is (4));
   }
+
+  @SuppressWarnings ("unchecked")
+  @Test
+  public void toIterable () {
+    assertThat ((Iterable <Integer>) p.toIterable (new int[] { 1, 2, 3 }),
+                allOf (hasItem (1), hasItem (2), hasItem (3)));
+    assertThat ((Iterable <Integer>) p.toIterable (asList (1, 2, 3)), allOf (hasItem (1), hasItem (2), hasItem (3)));
+
+  }
 }
