@@ -2,7 +2,7 @@
 
 # jsonpath-jaxrs-filter
 
-`JsonPathFilter` is annotated for autoscan discovery - simply add the jar to your dependencies to make use of this feature. Filter is enabled for `application/json`, `application/yaml`, `text/yaml`, `application/xml`, and `text/xml` entity media types
+`JsonPathFilter` is annotated for autoscan discovery - simply add the jar to your dependencies to make use of this feature. Filter is enabled for all entity media types. As long as an incoming request specifies a jsonpath in `JSONPath` incoming header the filter will be applied
 
 See [jayway](https://github.com/json-path/JsonPath) for the actual jsonpath implementation used
 
