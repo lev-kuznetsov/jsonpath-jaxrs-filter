@@ -46,7 +46,7 @@ import org.junit.Test;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
 
-public class JsonPathFilterTest {
+public class JsonPathInterceptorTest {
 
   Dispatcher d;
   ObjectMapper m;
@@ -54,7 +54,7 @@ public class JsonPathFilterTest {
   @Before
   public void setup () {
     d = createDispatcher ();
-    d.getProviderFactory ().register (JsonPathFilter.class);
+    d.getProviderFactory ().register (JsonPathInterceptor.class);
     d.getProviderFactory ().register (JacksonJsonProvider.class);
     d.getRegistry ().addSingletonResource (new Bar ());
     m = new ObjectMapper ();
@@ -76,6 +76,6 @@ public class JsonPathFilterTest {
   @Test
   public void filterCustom () throws Exception {
     assertThat (invoke (post ("/bar").accept (APPLICATION_JSON).header ("JSONPath", "$.foo")).getContentAsString (),
-                is ("foo"));
+                is ("\"foo\""));
   }
 }

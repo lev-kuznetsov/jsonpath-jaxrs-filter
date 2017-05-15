@@ -35,12 +35,13 @@ import java.io.IOException;
 import java.util.Optional;
 
 import javax.ws.rs.Produces;
-import javax.ws.rs.container.ContainerRequestContext;
-import javax.ws.rs.container.ContainerResponseContext;
-import javax.ws.rs.container.ContainerResponseFilter;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.ext.Provider;
 import javax.ws.rs.ext.Providers;
+import javax.ws.rs.ext.WriterInterceptor;
+import javax.ws.rs.ext.WriterInterceptorContext;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.spi.json.JsonProvider;
@@ -52,12 +53,16 @@ import com.jayway.jsonpath.spi.json.JsonProvider;
  */
 @Provider
 @Produces (WILDCARD)
-public class JsonPathFilter implements ContainerResponseFilter {
+public class JsonPathInterceptor implements WriterInterceptor {
 
   /**
    * Providers
    */
   private @Context Providers providers;
+  /**
+   * Request headers
+   */
+  private @Context HttpHeaders headers;
 
   /**
    * @param q
@@ -66,25 +71,23 @@ public class JsonPathFilter implements ContainerResponseFilter {
    *          type
    * @return instance
    */
-  private <T> Optional <T> resolve (ContainerResponseContext r, Class <T> t) {
-    return of (r.getMediaType (), null).map (m -> {
-      return providers.getContextResolver (t, m);
-    }).filter (c -> c != null).findFirst ().map (c -> c.getContext (t));
+  private <T> Optional <T> resolve (WriterInterceptorContext c, Class <T> t) {
+    return of (c.getMediaType(), null).map (m -> providers.getContextResolver (t, m)).filter (r -> {
+      return r != null;
+    }).findFirst ().map (r -> r.getContext (t));
   }
 
   /*
    * (non-Javadoc)
-   * 
-   * @see
-   * javax.ws.rs.container.ContainerResponseFilter#filter(javax.ws.rs.container.
-   * ContainerRequestContext, javax.ws.rs.container.ContainerResponseContext)
+   * @see javax.ws.rs.ext.WriterInterceptor#aroundWriteTo(javax.ws.rs.ext.WriterInterceptorContext)
    */
   @Override
-  public void filter (ContainerRequestContext q, ContainerResponseContext r) throws IOException {
-    ofNullable (q.getHeaders ().getFirst ("JSONPath")).filter (j -> !"$..*".equals (j)).ifPresent (j -> {
-      r.setEntity (parse (r.getEntity (), builder ().jsonProvider (resolve (r, JsonProvider.class).orElseGet ( () -> {
-        return new JacksonBeanJsonProvider (resolve (r, ObjectMapper.class).orElseGet (ObjectMapper::new));
-      })).build ()).read (j));
+  public void aroundWriteTo (WriterInterceptorContext c) throws IOException, WebApplicationException {
+    ofNullable (headers.getHeaderString ("JSONPath")).filter (j -> !"$..*".equals (j)).ifPresent (j -> {
+      c.setEntity (parse (c.getEntity (), builder ().jsonProvider (resolve (c, JsonProvider.class).orElseGet ( () -> {
+        return new JacksonBeanJsonProvider (resolve (c, ObjectMapper.class).orElseGet (ObjectMapper::new));
+      })).build ()).read ((String) j));
     });
+    c.proceed ();
   }
 }
