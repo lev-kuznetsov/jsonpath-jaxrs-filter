@@ -4,7 +4,7 @@
 
   <groupId>us.levk</groupId>
   <artifactId>jsonpath-jaxrs-filter</artifactId>
-  <version>0.1.0-SNAPSHOT</version>
+  <version>0.1.0</version>
   <packaging>jar</packaging>
 
   <name>jsonpath-jaxrs-filter</name>
